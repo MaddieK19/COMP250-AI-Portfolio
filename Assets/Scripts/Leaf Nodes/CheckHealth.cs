@@ -7,10 +7,10 @@ using System;
 public class CheckHealth : ActionNode
 {
     public Fish fish;
-    public int healthThreshold;
+    public int minHealth, maxHealth;
     public override Status Update()
     {
-        if (fish.getHealth() < healthThreshold)
+        if (minHealth > fish.getHealth() && fish.getHealth() < maxHealth)
         {
             return Status.Running;
         }
