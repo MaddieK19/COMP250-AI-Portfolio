@@ -5,11 +5,25 @@ using UnityEngine;
  * Fish class  
  */
 public class Fish : MonoBehaviour {
+    private int health = 100;
+
+    public int getHealth()
+    {
+        return health;
+    }
+
+
+    public void setHealth(int newHealth)
+    {
+        health = newHealth;
+    }
+
     public enum CollisionStates
     {
         None,
         Player,
         OtherFish,
+        Predator,
         Environment
     };
     public CollisionStates collisionState;
@@ -30,7 +44,14 @@ public class Fish : MonoBehaviour {
             collisionState = CollisionStates.Player;
         else if (col.gameObject.tag == "Fish")
             collisionState = CollisionStates.OtherFish;
+        else if (col.gameObject.tag == "Predator")
+            collisionState = CollisionStates.Predator;
         else
             collisionState = CollisionStates.None;
+    }
+
+    void takeDamage()
+    {
+
     }
 }
