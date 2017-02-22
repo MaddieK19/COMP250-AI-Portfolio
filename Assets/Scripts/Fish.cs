@@ -5,7 +5,14 @@ using UnityEngine;
  * Fish class  
  */
 public class Fish : MonoBehaviour {
-    private int health = 100;
+    // int for the fishes health level
+    public int health = 100;
+
+    // Variables to be used for moving in a circle
+    public float yPos;
+    Vector3 currentPosition;
+    float timeCounter = 0;
+    float x, y, z;
 
     public int getHealth()
     {
@@ -40,9 +47,9 @@ public class Fish : MonoBehaviour {
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.tag == "Player")
-            collisionState = CollisionStates.Player;
-        else if (col.gameObject.tag == "Fish")
+        //if (col.gameObject.tag == "Player")
+         //   collisionState = CollisionStates.Player;
+        if (col.gameObject.tag == "Fish")
             collisionState = CollisionStates.OtherFish;
         else if (col.gameObject.tag == "Predator")
             collisionState = CollisionStates.Predator;
@@ -50,8 +57,19 @@ public class Fish : MonoBehaviour {
             collisionState = CollisionStates.None;
     }
 
-    void takeDamage()
+    public void circularMovement()
     {
+        Vector3 previousPosition = currentPosition;
+        timeCounter += Time.deltaTime;
+        x = Mathf.Cos(timeCounter) * 2;
+        z = Mathf.Sin(timeCounter) * 2;
+        y = yPos;
+        currentPosition = new Vector3(x, y, z);
+        transform.position = currentPosition;
+    }
 
+    public void resetMovementTimer()
+    {
+        timeCounter = 0;
     }
 }
