@@ -6,12 +6,12 @@ using System;
 
 public class ResetCollisionState : ActionNode
 {
-    // Fish to see if fish has collided with anything
-    public Fish fish;
+    // Boid to see if fish has collided with anything
+    public Boid boid;
 
     public override Status Update()
     {
-        fish.collisionState = Fish.CollisionStates.None;
+        boid.collisionState = Boid.CollisionStates.None;
         return Status.Success;
     }
 }

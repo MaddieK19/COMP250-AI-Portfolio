@@ -7,15 +7,15 @@ using System;
 
 public class TakeDamage : ActionNode
 {
-    public Fish fish;
+    public Boid boid;
     public override Status Update()
     {
-        if (fish.getHealth() < 1)
+        if (boid.getHealth() < 1)
             return Status.Failure;
         else
         {
             int randomDamage = UnityEngine.Random.Range(0, 51);
-            fish.setHealth(fish.getHealth() - 50 - randomDamage);
+            boid.setHealth(boid.getHealth() - 50 - randomDamage);
             return Status.Success;
         }
             

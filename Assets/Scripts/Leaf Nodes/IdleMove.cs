@@ -6,13 +6,13 @@ using System;
 
 public class IdleMove : ActionNode
 {
-    public Fish fish;
+    public Boid boid;
 
     public override Status Update()
     {
-        fish.circularMovement();
+       // boid.circularMovement();
 
-        if (fish.collisionState != Fish.CollisionStates.None)
+        if (boid.collisionState != Boid.CollisionStates.None)
             return Status.Failure;
         else 
             return Status.Success;

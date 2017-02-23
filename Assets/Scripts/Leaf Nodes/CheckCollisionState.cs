@@ -7,7 +7,7 @@ using System;
 public class CheckCollisionState : ActionNode
 {
     // Fish to see if fish has collided with anything
-    public Fish fish;
+    public Boid boid;
     // String to check the name of what fish has collided with
     public String collidedWith;
 
@@ -15,9 +15,9 @@ public class CheckCollisionState : ActionNode
     {
         if (collidedWith == null)
             return Status.Failure;
-        else if (collidedWith == "Player" && fish.collisionState == Fish.CollisionStates.Player)
+        else if (collidedWith == "Player" && boid.collisionState == Boid.CollisionStates.Player)
             return Status.Success;
-        else if (collidedWith == "Predator" && fish.collisionState == Fish.CollisionStates.Predator)
+        else if (collidedWith == "Predator" && boid.collisionState == Boid.CollisionStates.Predator)
             return Status.Success;
         else
             return Status.Failure;

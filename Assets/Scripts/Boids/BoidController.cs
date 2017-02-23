@@ -33,37 +33,55 @@ public class BoidController : MonoBehaviour {
             Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea));
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
-	}
+        calculateCenter();
+    }
 	
 	// Update is called once per frame
 	void Update () {
        for (int i = 0; i < maxBoids; i++)
         {
-            alignmentVector = align();
-            cohesionVector = cohesion();
-            separationVector = seperate();
-                        
-            boids[i].GetComponent<Boid>().velocity = alignmentVector + cohesionVector + separationVector;
-            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity;
+           
+            align(boids[i]);
 
+
+            boids[i].GetComponent<Boid>().velocity = boids[i].GetComponent<Boid>().velocity +  alignmentVector;
+            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity;
+            
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
         }
 
     }
 
-    Vector3 align()
+    // Applies alignment rules to vector
+    void align(GameObject boid)
     {
-        return new Vector3();
+        calculateCenter();
+        if (boid.transform.position != flockCenter)
+            alignmentVector = (flockCenter - boid.transform.position) / 100;
+        
     }
-
+    // Applies cohesion rules to vector
     Vector3 cohesion()
     {
         return new Vector3();
     }
-
+    // Applies seperate rules to vector
     Vector3 seperate()
     {
         return new Vector3();
+    }
+
+    // Calculates and returns the center points of all the boids
+    void  calculateCenter()
+    {
+        // Resets center to 0
+        flockCenter = new Vector3();
+        for (int i = 0; i < maxBoids; i++)
+        {
+            flockCenter = flockCenter + boids[i].transform.position;
+        }
+
+        flockCenter = flockCenter / maxBoids;
     }
 }
