@@ -42,11 +42,28 @@ public class BoidController : MonoBehaviour {
             alignmentVector = align();
             cohesionVector = cohesion();
             separationVector = seperate();
+                        
+            boids[i].GetComponent<Boid>().velocity = alignmentVector + cohesionVector + separationVector;
+            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity;
 
-            boids[i].velocity
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
         }
 
+    }
+
+    Vector3 align()
+    {
+        return new Vector3();
+    }
+
+    Vector3 cohesion()
+    {
+        return new Vector3();
+    }
+
+    Vector3 seperate()
+    {
+        return new Vector3();
     }
 }

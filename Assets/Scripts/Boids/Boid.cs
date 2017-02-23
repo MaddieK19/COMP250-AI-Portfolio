@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Boid : MonoBehaviour {
     // Vector3 for the boid velocity
-    Vector3 velocity;
+    public Vector3 velocity;
 
     // int for the fishes health level
     private int health = 100;
