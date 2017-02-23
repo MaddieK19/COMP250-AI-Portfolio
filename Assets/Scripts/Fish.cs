@@ -6,7 +6,7 @@ using UnityEngine;
  */
 public class Fish : MonoBehaviour {
     // int for the fishes health level
-    public int health = 100;
+    private int health = 100;
 
     // Variables to be used for moving in a circle
     public float yPos;
