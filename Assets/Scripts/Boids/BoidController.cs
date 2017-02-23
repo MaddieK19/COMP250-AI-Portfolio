@@ -40,7 +40,7 @@ public class BoidController : MonoBehaviour {
 	void Update () {
        for (int i = 0; i < maxBoids; i++)
         {
-           
+           // calculateCenter(); // should work properly when other rules are implemented 
             align(boids[i]);
 
 
@@ -56,7 +56,6 @@ public class BoidController : MonoBehaviour {
     // Applies alignment rules to vector
     void align(GameObject boid)
     {
-        calculateCenter();
         if (boid.transform.position != flockCenter)
             alignmentVector = (flockCenter - boid.transform.position) / 100;
         
