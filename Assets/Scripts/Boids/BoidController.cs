@@ -9,6 +9,7 @@ using UnityEngine;
 
 public class BoidController : MonoBehaviour
 {
+    public GameObject flock;
     // boid prefab
     public GameObject boid;
     // Vec3 for the center of the flocking
@@ -19,9 +20,11 @@ public class BoidController : MonoBehaviour
     int spawnArea = 1;
     // float for the boids movement speed
     float speed = 0.6f;
-    float seperationDistance = 1.0f, cohesionAmount = 100;
+    float seperationDistance = 0.5f, cohesionAmount = 100;
     //! Array of boid prefabs
     public GameObject[] boids = new GameObject[maxBoids];
+
+    
 
 
     //Vector 3 used to determine boids next position 
@@ -37,24 +40,25 @@ public class BoidController : MonoBehaviour
             Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea));
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
-        calculateCenter();
+        flockCenter = flock.transform.position;
+        //calculateCenter();
     }
 
     // Update is called once per frame
     void Update()
     {
-        calculateCenter();
+        //calculateCenter();
+        
         for (int i = 0; i < maxBoids; i++)
         {
-            // calculateCenter(); // should work properly when other rules are implemented 
             cohesion(boids[i]);
             seperate(boids[i]);
-            ///align(boids[i]);
+            //align(boids[i]);
 
 
-            Vector3 boidVelocity = boids[i].GetComponent<Boid>().velocity + cohesionVector + separationVector; // + alignmentVector;
+            Vector3 boidVelocity = boids[i].GetComponent<Boid>().velocity + cohesionVector + separationVector;// + alignmentVector;
             boids[i].GetComponent<Boid>().velocity = boidVelocity;
-            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity;
+            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
 
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
@@ -67,7 +71,6 @@ public class BoidController : MonoBehaviour
     {
         if (boid.transform.position != flockCenter)
             cohesionVector = (flockCenter - boid.transform.position) / cohesionAmount;
-
     }
 
     // Applies seperate rules to vector
@@ -90,17 +93,14 @@ public class BoidController : MonoBehaviour
     // Applies alignment rules to vector
     void align(GameObject boid)
     {
-        Vector3 boidVelocity = boid.GetComponent<Boid>().velocity;
+        Vector3 boidVelocity = new Vector3(); // = boid.GetComponent<Boid>().velocity;
 
         for (int i = 0; i < maxBoids; i++)
         {
-            if (boids[i] != boid)
-            {
                 boidVelocity = boidVelocity + boids[i].GetComponent<Boid>().velocity;
-            }
         }
-        boidVelocity = boidVelocity / (maxBoids - 1);
-        alignmentVector = (boidVelocity - boid.GetComponent<Boid>().velocity) / 8;
+        //boidVelocity = boidVelocity / (maxBoids - 1);
+        alignmentVector = boidVelocity / 8;
 
 
     }
