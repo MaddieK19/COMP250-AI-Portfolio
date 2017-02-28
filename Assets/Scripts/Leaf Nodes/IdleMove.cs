@@ -11,10 +11,10 @@ public class IdleMove : ActionNode
     public override Status Update()
     {
        // boid.circularMovement();
-
+       /*
         if (boid.collisionState != Boid.CollisionStates.None)
             return Status.Failure;
-        else 
+        else */
             return Status.Success;
     }
 }
