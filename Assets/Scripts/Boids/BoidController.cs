@@ -13,7 +13,9 @@ public class BoidController : MonoBehaviour
     // boid prefab
     public GameObject boid;
     // Vec3 for the center of the flocking
-    public Vector3 flockCenter = new Vector3(0, 0, 0);
+    public Vector3 flockCenter;
+    // Vec3 for the flock velocity
+    public Vector3 flockVelocity = new Vector3(1, 0, 0);
     // the maximum number of boids that will be spawned
     static int maxBoids = 7;
     //! int for the range of coordinates where boids can spawn
@@ -40,14 +42,13 @@ public class BoidController : MonoBehaviour
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
         flockCenter = flock.transform.position;
-        //calculateCenter();
     }
 
     // Update is called once per frame
     void Update()
     {
         //calculateCenter();
-        
+        //flockCenter = flockCenter + flockVelocity;
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -62,14 +63,15 @@ public class BoidController : MonoBehaviour
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
         }
+        flock.transform.Translate(0, 0, Time.deltaTime * speed);
 
     }
 
     // Applies cohesion rule to vector
     void cohesion(GameObject boid)
     {
-        if (boid.transform.position != flockCenter)
-            cohesionVector = (flockCenter - boid.transform.position) / cohesionAmount;
+        if (boid.transform.position != flock.transform.position)
+            cohesionVector = (flock.transform.position - boid.transform.position) / cohesionAmount;
     }
 
     // Applies seperate rules to vector
@@ -97,14 +99,14 @@ public class BoidController : MonoBehaviour
     // Applies alignment rules to vector
     void align(GameObject boid)
     {
-        /*Vector3 boidVelocity = new Vector3(); // = boid.GetComponent<Boid>().velocity;
+        Vector3 boidVelocity = new Vector3(); // = boid.GetComponent<Boid>().velocity;
 
         for (int i = 0; i < maxBoids; i++)
         {
                 boidVelocity = boidVelocity + boids[i].GetComponent<Boid>().velocity;
         }
         //boidVelocity = boidVelocity / (maxBoids - 1);
-        alignmentVector = boidVelocity / 8;*/
+        alignmentVector = boidVelocity / 8;
 
 
     }
