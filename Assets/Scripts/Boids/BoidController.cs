@@ -63,7 +63,7 @@ public class BoidController : MonoBehaviour
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
         }
-        flock.transform.Translate(0, 0, Time.deltaTime * speed);
+        //flock.transform.Translate(0, 0, Time.deltaTime * speed);
 
     }
 
