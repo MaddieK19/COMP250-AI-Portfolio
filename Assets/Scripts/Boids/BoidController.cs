@@ -82,7 +82,11 @@ public class BoidController : MonoBehaviour
             if (boids[i] != boid)
             {
                 if (Vector3.Distance(boids[i].transform.position, boid.transform.position) < seperationDistance)
+                {
                     flockCenter = flockCenter - (boids[i].transform.position - boid.transform.position);
+                    boid.GetComponent<Boid>().velocity = (boid.GetComponent<Boid>().velocity + boids[i].GetComponent<Boid>().velocity) / 2;
+                    boids[i].GetComponent<Boid>().velocity = boid.GetComponent<Boid>().velocity;
+                }
             }
         }
 
@@ -93,17 +97,19 @@ public class BoidController : MonoBehaviour
     // Applies alignment rules to vector
     void align(GameObject boid)
     {
-        Vector3 boidVelocity = new Vector3(); // = boid.GetComponent<Boid>().velocity;
+        /*Vector3 boidVelocity = new Vector3(); // = boid.GetComponent<Boid>().velocity;
 
         for (int i = 0; i < maxBoids; i++)
         {
                 boidVelocity = boidVelocity + boids[i].GetComponent<Boid>().velocity;
         }
         //boidVelocity = boidVelocity / (maxBoids - 1);
-        alignmentVector = boidVelocity / 8;
+        alignmentVector = boidVelocity / 8;*/
 
 
     }
+
+
 
     // Calculates and returns the center points of all the boids
     void calculateCenter()
