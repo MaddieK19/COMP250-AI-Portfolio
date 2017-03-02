@@ -15,17 +15,15 @@ public class BoidController : MonoBehaviour
     // Vec3 for the center of the flocking
     public Vector3 flockCenter = new Vector3(0, 0, 0);
     // the maximum number of boids that will be spawned
-    static int maxBoids = 5;
+    static int maxBoids = 7;
     //! int for the range of coordinates where boids can spawn
-    int spawnArea = 1;
+    int spawnArea = 2;
     // float for the boids movement speed
     float speed = 0.6f;
     float seperationDistance = 0.5f, cohesionAmount = 100;
     //! Array of boid prefabs
-    public GameObject[] boids = new GameObject[maxBoids];
-
+    public GameObject[] boids; 
     
-
 
     //Vector 3 used to determine boids next position 
     Vector3 alignmentVector, cohesionVector, separationVector;
@@ -34,6 +32,7 @@ public class BoidController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        boids = new GameObject[maxBoids];
         // Fills the boids array with boid prefabs
         for (int i = 0; i < maxBoids; i++)
         {
@@ -84,6 +83,7 @@ public class BoidController : MonoBehaviour
                 if (Vector3.Distance(boids[i].transform.position, boid.transform.position) < seperationDistance)
                 {
                     flockCenter = flockCenter - (boids[i].transform.position - boid.transform.position);
+
                     boid.GetComponent<Boid>().velocity = (boid.GetComponent<Boid>().velocity + boids[i].GetComponent<Boid>().velocity) / 2;
                     boids[i].GetComponent<Boid>().velocity = boid.GetComponent<Boid>().velocity;
                 }
