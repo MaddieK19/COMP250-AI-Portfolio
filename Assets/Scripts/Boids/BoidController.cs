@@ -4,7 +4,8 @@ using UnityEngine;
 
 
 /*
- *  Used pseudocode from http://www.kfish.org/boids/pseudocode.html as a starting point
+ * Boid controller class that manages boids and their behaviour/movement
+ * Used pseudocode from http://www.kfish.org/boids/pseudocode.html as a starting point
  */
 
 public class BoidController : MonoBehaviour
@@ -12,24 +13,27 @@ public class BoidController : MonoBehaviour
     public GameObject flock;
     // boid prefab
     public GameObject boid;
+
     // Vec3 for the center of the flocking
     public Vector3 flockCenter;
     // Vec3 for the flock velocity
     public Vector3 flockVelocity = new Vector3(1, 0, 0);
-    // the maximum number of boids that will be spawned
+    //Vector 3 used to determine boids next position 
+    Vector3 alignmentVector, cohesionVector, separationVector;
+
+    // int for the maximum number of boids that will be spawned
     static int maxBoids = 7;
     //! int for the range of coordinates where boids can spawn
-    int spawnArea = 2;
+    static int spawnArea = 2;
     // float for the boids movement speed
     float speed = 0.6f;
+
     float seperationDistance = 0.5f, cohesionAmount = 100;
+
     //! Array of boid prefabs
     public GameObject[] boids; 
     //! Bool for whether the boids should flock be flocking
     public bool flockActive = false;
-
-    //Vector 3 used to determine boids next position 
-    Vector3 alignmentVector, cohesionVector, separationVector;
 
 
     // Use this for initialization
@@ -74,7 +78,7 @@ public class BoidController : MonoBehaviour
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
         }
-        //flock.transform.Translate(0, 0, Time.deltaTime * speed);
+        flock.transform.Translate(0, 0, Time.deltaTime * speed);
     }
 
     // Applies cohesion rule to vector
@@ -84,7 +88,7 @@ public class BoidController : MonoBehaviour
             cohesionVector = (flock.transform.position - boid.transform.position) / cohesionAmount;
     }
 
-    // Applies seperate rules to vector
+    // Stops boids from colliding and makes them match velocites 
     void seperate(GameObject boid)
     {
         flockCenter = new Vector3();
@@ -108,7 +112,7 @@ public class BoidController : MonoBehaviour
     // Applies alignment rules to vector
     void align(GameObject boid)
     {
-        Vector3 boidVelocity = new Vector3(); // = boid.GetComponent<Boid>().velocity;
+        Vector3 boidVelocity = new Vector3();
 
         for (int i = 0; i < maxBoids; i++)
         {
@@ -135,7 +139,8 @@ public class BoidController : MonoBehaviour
     {
         for (int i = 0; i < maxBoids; i++)
         {
-            boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
+            boids[i].transform.position = 
+                Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
         }
 
     }
