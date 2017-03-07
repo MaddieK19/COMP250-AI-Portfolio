@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 /*
- *  Using pseudocode from http://www.kfish.org/boids/pseudocode.html
+ *  Used pseudocode from http://www.kfish.org/boids/pseudocode.html as a starting point
  */
 
 public class BoidController : MonoBehaviour
@@ -25,7 +25,7 @@ public class BoidController : MonoBehaviour
     float seperationDistance = 0.5f, cohesionAmount = 100;
     //! Array of boid prefabs
     public GameObject[] boids; 
-    
+    //! Bool for whether the boids should flock be flocking
     public bool flockActive = false;
 
     //Vector 3 used to determine boids next position 
@@ -43,6 +43,7 @@ public class BoidController : MonoBehaviour
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
         flockCenter = flock.transform.position;
+        chooseFleeDirection();
     }
 
     // Update is called once per frame
@@ -50,11 +51,14 @@ public class BoidController : MonoBehaviour
     {
         if (flockActive)
             updateFlock();
+        else
+            fleeFromDanger();
     }
 
     public void updateFlock()
     {
-        //calculateCenter();
+        calculateCenter();
+        flock.transform.position = flockCenter;
         //flockCenter = flockCenter + flockVelocity;
         for (int i = 0; i < maxBoids; i++)
         {
@@ -91,7 +95,6 @@ public class BoidController : MonoBehaviour
                 if (Vector3.Distance(boids[i].transform.position, boid.transform.position) < seperationDistance)
                 {
                     flockCenter = flockCenter - (boids[i].transform.position - boid.transform.position);
-
                     boid.GetComponent<Boid>().velocity = (boid.GetComponent<Boid>().velocity + boids[i].GetComponent<Boid>().velocity) / 2;
                     boids[i].GetComponent<Boid>().velocity = boid.GetComponent<Boid>().velocity;
                 }
@@ -113,11 +116,8 @@ public class BoidController : MonoBehaviour
         }
         //boidVelocity = boidVelocity / (maxBoids - 1);
         alignmentVector = boidVelocity / 8;
-
-
     }
-
-
+    
 
     // Calculates and returns the center points of all the boids
     void calculateCenter()
@@ -129,5 +129,23 @@ public class BoidController : MonoBehaviour
             flockCenter = flockCenter + boids[i].transform.position;
         }
         flockCenter = flockCenter / maxBoids;
+    }
+
+    void fleeFromDanger()
+    {
+        for (int i = 0; i < maxBoids; i++)
+        {
+            boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
+        }
+
+    }
+
+    public void chooseFleeDirection()
+    {
+        for (int i = 0; i < maxBoids; i++)
+        {
+            boids[i].GetComponent<Boid>().chooseRunDirection();
+        }
+
     }
 }

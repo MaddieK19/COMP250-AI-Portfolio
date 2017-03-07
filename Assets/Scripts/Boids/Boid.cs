@@ -6,6 +6,7 @@ using UnityEngine;
 public class Boid : MonoBehaviour {
     // Vector3 for the boid velocity
     public Vector3 velocity = new Vector3(0.0f,0.0f,0.0f);
+    public Vector3 runDirection;
 
     // int for the fishes health level
     private int health = 100;
@@ -54,5 +55,10 @@ public class Boid : MonoBehaviour {
             collisionState = CollisionStates.Predator;
         else
             collisionState = CollisionStates.None;
+    }
+
+    public void chooseRunDirection()
+    {
+        runDirection = new Vector3(Random.Range(-10.0f, 10.0f), 0, Random.Range(-10.0f, 10.0f));
     }
 }
