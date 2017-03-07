@@ -26,6 +26,7 @@ public class BoidController : MonoBehaviour
     //! Array of boid prefabs
     public GameObject[] boids; 
     
+    public bool flockActive = false;
 
     //Vector 3 used to determine boids next position 
     Vector3 alignmentVector, cohesionVector, separationVector;
@@ -47,6 +48,12 @@ public class BoidController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (flockActive)
+            updateFlock();
+    }
+
+    public void updateFlock()
+    {
         //calculateCenter();
         //flockCenter = flockCenter + flockVelocity;
         for (int i = 0; i < maxBoids; i++)
@@ -64,7 +71,6 @@ public class BoidController : MonoBehaviour
             //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, move.transform.position, speed * Time.deltaTime);
         }
         //flock.transform.Translate(0, 0, Time.deltaTime * speed);
-
     }
 
     // Applies cohesion rule to vector
@@ -93,7 +99,7 @@ public class BoidController : MonoBehaviour
         }
 
         separationVector = flockCenter;
-        flockCenter = new Vector3();
+        flockCenter = flock.transform.position;
     }
 
     // Applies alignment rules to vector
