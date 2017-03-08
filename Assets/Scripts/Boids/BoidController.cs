@@ -22,9 +22,9 @@ public class BoidController : MonoBehaviour
     Vector3 alignmentVector, cohesionVector, separationVector;
 
     // int for the maximum number of boids that will be spawned
-    static int maxBoids = 7;
+    static int maxBoids = 100;
     //! int for the range of coordinates where boids can spawn
-    static int spawnArea = 2;
+    static int spawnArea = 3;
     // float for the boids movement speed
     float speed = 0.6f;
 
