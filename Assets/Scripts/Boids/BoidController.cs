@@ -153,4 +153,9 @@ public class BoidController : MonoBehaviour
         }
 
     }
+
+    void OnCollisionEnter(Collision col)
+    {
+
+    }
 }
