@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class Boid : MonoBehaviour {
     // Vector3 for the boid velocity
-    public Vector3 velocity = new Vector3(0.0f,0.0f,0.0f);  //TODO: Cap velocity 
+    public Vector3 velocity = new Vector3(0.0f,0.0f,0.0f);
     public Vector3 runDirection;
+    public int velocityCap = 1;
 
     // int for the fishes health level
     private int health = 100;
@@ -62,5 +63,15 @@ public class Boid : MonoBehaviour {
     public void chooseRunDirection()
     {
         runDirection = new Vector3(Random.Range(-10.0f, 10.0f), Random.Range(-10.0f, 10.0f), Random.Range(-10.0f, 10.0f));
+    }
+
+    public void capVelocity()
+    {
+        if (velocity.x > velocityCap)
+            velocity.x = velocityCap;
+        if (velocity.y > velocityCap)
+            velocity.y = velocityCap;
+        if (velocity.z > velocityCap)
+            velocity.z = velocityCap;
     }
 }

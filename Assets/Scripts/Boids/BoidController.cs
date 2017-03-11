@@ -73,6 +73,7 @@ public class BoidController : MonoBehaviour
 
             Vector3 boidVelocity = boids[i].GetComponent<Boid>().velocity + cohesionVector + separationVector;// + alignmentVector;
             boids[i].GetComponent<Boid>().velocity = boidVelocity;
+            boids[i].GetComponent<Boid>().capVelocity();
             boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
 
             //boids[i].transform.Translate(0, 0, Time.deltaTime * speed);
@@ -155,6 +156,18 @@ public class BoidController : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.tag == "WaterBody")
+        {
+
+        }
+    }
+
+    void OnCollisionStay(Collision collisionInfo)
+    {
+
+    }
+    void OnCollisionExit(Collision collisionInfo)
     {
 
     }
