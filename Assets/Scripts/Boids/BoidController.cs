@@ -24,7 +24,7 @@ public class BoidController : MonoBehaviour
     Vector3 cohesionVector, separationVector;
 
     // int for the maximum number of boids that will be spawned
-    static int maxBoids = 15;
+    static int maxBoids = 100;
     //! int for the range of coordinates where boids can spawn
     static int spawnArea = 3;
     // float for the boids movement speed
@@ -39,7 +39,6 @@ public class BoidController : MonoBehaviour
     //! Bool for whether the boids should flock be flocking
     public bool flockActive = false;
 
-
     // Use this for initialization
     void Start()
     {
@@ -50,7 +49,6 @@ public class BoidController : MonoBehaviour
             Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea));
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
-        //flockCenter = flock.transform.position;
         chooseFleeDirection();
     }
 
@@ -66,7 +64,14 @@ public class BoidController : MonoBehaviour
     public void updateFlock()
     {
         calculateCenter();
-        
+        updateBoidPosition();
+        circularMovement();
+    }
+
+    // Recalculates each boids position
+    void updateBoidPosition()
+    {
+        clampPosition(flock);
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -76,13 +81,8 @@ public class BoidController : MonoBehaviour
             boids[i].GetComponent<Boid>().velocity = boidVelocity;
             boids[i].GetComponent<Boid>().capVelocity();
             boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
+            clampPosition(boids[i]);
         }
-        circularMovement();
-    }
-
-    void moveFlock(Vector3 goal)
-    {
-        flock.transform.position = Vector3.MoveTowards(flock.transform.position, goal, speed * Time.deltaTime);
     }
 
     // Applies cohesion rule to vector
@@ -143,6 +143,12 @@ public class BoidController : MonoBehaviour
 
     }
 
+    void moveFlock(Vector3 goal)
+    {
+        flock.transform.position = Vector3.MoveTowards(flock.transform.position, goal, speed * Time.deltaTime);
+    }
+
+    // Moves the center of the flock in a circle for the boids to follow
     void circularMovement()
     {
         Vector3 previousPosition = flock.transform.position;
@@ -150,20 +156,13 @@ public class BoidController : MonoBehaviour
         flock.transform.position = new Vector3(Mathf.Cos(timeCounter) * 2, Mathf.Sin(timeCounter) * 2, 0);
     }
 
-    void OnCollisionEnter(Collision col)
+    void clampPosition(GameObject gameObject)
     {
-        if (col.gameObject.tag == "WaterBody")
-        {
-            Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime);
-        }
-    }
-
-    void OnCollisionStay(Collision collisionInfo)
-    {
-
-    }
-    void OnCollisionExit(Collision collisionInfo)
-    {
-
+        Bounds waterBounds = pond.GetComponent<Collider>().bounds;
+        Vector3 pos = gameObject.transform.position;
+        pos.x = Mathf.Clamp(pos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
+        pos.y = Mathf.Clamp(pos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
+        pos.z = Mathf.Clamp(pos.z, waterBounds.center.z - waterBounds.extents.z, waterBounds.center.z + waterBounds.extents.z);
+        gameObject.transform.position = pos;
     }
 }
