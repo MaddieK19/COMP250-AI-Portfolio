@@ -29,7 +29,7 @@ public class BoidController : MonoBehaviour
     // int for the maximum number of boids that will be spawned
     static int maxBoids = 100;
     //! int for the range of coordinates where boids can spawn
-    static int spawnArea = 3;
+    static int spawnArea = 5;
     // float for the boids movement speed
     float speed = 0.6f;
     // timer for updating flock position
@@ -52,7 +52,7 @@ public class BoidController : MonoBehaviour
         // Fills the boids array with boid prefabs
         for (int i = 0; i < maxBoids; i++)
         {
-            Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea));
+            Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(0, spawnArea), Random.Range(-spawnArea, spawnArea));
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
         chooseFleeDirection();
@@ -61,6 +61,8 @@ public class BoidController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        calculateCenter();
+
         if (flockActive)
             updateFlock();
         else
@@ -69,7 +71,6 @@ public class BoidController : MonoBehaviour
 
     public void updateFlock()
     {
-        calculateCenter();
         updateBoidPosition();
         circularMovement();
     }
@@ -78,6 +79,7 @@ public class BoidController : MonoBehaviour
     void updateBoidPosition()
     {
         clampPosition(flock.transform.position);
+
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -91,9 +93,23 @@ public class BoidController : MonoBehaviour
             if (!checkInWater(boids[i]))
             {
                 clampPosition(boids[i].transform.position);
-                boids[i].GetComponent<Boid>().velocity = -boids[i].GetComponent<Boid>().velocity;
-            }
 
+                if (boids[i].GetComponent<Boid>().velocity.y < 0 ||
+                    boids[i].GetComponent<Boid>().velocity.y > 10)
+                {
+                    boids[i].GetComponent<Boid>().velocity.y = -boids[i].GetComponent<Boid>().velocity.y;
+                }
+                if (boids[i].GetComponent<Boid>().velocity.x < waterBounds.center.x - waterBounds.extents.x ||
+                    boids[i].GetComponent<Boid>().velocity.x > waterBounds.center.x + waterBounds.extents.x)
+                {
+                    boids[i].GetComponent<Boid>().velocity.x = -boids[i].GetComponent<Boid>().velocity.x;
+                }
+                if (boids[i].GetComponent<Boid>().velocity.z < waterBounds.center.z - waterBounds.extents.z ||
+                    boids[i].GetComponent<Boid>().velocity.z > waterBounds.center.z + waterBounds.extents.z)
+                {
+                    boids[i].GetComponent<Boid>().velocity.z = -boids[i].GetComponent<Boid>().velocity.z;
+                }
+            }
         }
     }
 
@@ -139,6 +155,10 @@ public class BoidController : MonoBehaviour
     {
         for (int i = 0; i < maxBoids; i++)
         {
+            if (!checkInWater(boids[i]))
+            {
+                boids[i].GetComponent<Boid>().runDirection = -boids[i].GetComponent<Boid>().runDirection;
+            }
             boids[i].transform.position =
                 Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
         }
@@ -149,7 +169,7 @@ public class BoidController : MonoBehaviour
         for (int i = 0; i < maxBoids; i++)
         {
             boids[i].GetComponent<Boid>().chooseRunDirection();
-            boids[i].GetComponent<Boid>().runDirection = clampPosition(boids[i].GetComponent<Boid>().runDirection);
+            //boids[i].GetComponent<Boid>().runDirection = clampPosition(boids[i].GetComponent<Boid>().runDirection);
         }
 
     }
