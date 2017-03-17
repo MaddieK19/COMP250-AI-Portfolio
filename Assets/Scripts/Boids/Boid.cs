@@ -44,7 +44,7 @@ public class Boid : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        //capVelocity();		
 	}
 
     // Setes the boids collision state to allow it to react correctly

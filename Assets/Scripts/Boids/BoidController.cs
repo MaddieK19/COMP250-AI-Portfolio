@@ -77,7 +77,7 @@ public class BoidController : MonoBehaviour
     // Recalculates each boids position
     void updateBoidPosition()
     {
-        //clampPosition(flock);
+        clampPosition(flock.transform.position);
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -90,7 +90,7 @@ public class BoidController : MonoBehaviour
 
             if (!checkInWater(boids[i]))
             {
-                clampPosition(boids[i]);
+                clampPosition(boids[i].transform.position);
                 boids[i].GetComponent<Boid>().velocity = -boids[i].GetComponent<Boid>().velocity;
             }
 
@@ -143,12 +143,13 @@ public class BoidController : MonoBehaviour
                 Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
         }
     }
-
+    
     public void chooseFleeDirection()
     {
         for (int i = 0; i < maxBoids; i++)
         {
             boids[i].GetComponent<Boid>().chooseRunDirection();
+            boids[i].GetComponent<Boid>().runDirection = clampPosition(boids[i].GetComponent<Boid>().runDirection);
         }
 
     }
@@ -168,21 +169,17 @@ public class BoidController : MonoBehaviour
     }
 
     // Prevents boids from leaving an bounded area
-    void clampPosition(GameObject gameObject)
-    {
+    Vector3 clampPosition(Vector3 gamePos)
+    { 
+        gamePos.x = Mathf.Clamp(gamePos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
+        gamePos.y = Mathf.Clamp(gamePos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
+        gamePos.z = Mathf.Clamp(gamePos.z, waterBounds.center.z - waterBounds.extents.z, waterBounds.center.z + waterBounds.extents.z);
 
-        Vector3 pos = gameObject.transform.position;
-        pos.x = Mathf.Clamp(pos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
-        pos.y = Mathf.Clamp(pos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
-        pos.z = Mathf.Clamp(pos.z, waterBounds.center.z - waterBounds.extents.z, waterBounds.center.z + waterBounds.extents.z);
-
-        gameObject.transform.position = pos;
+        return gamePos;
     }
 
     bool checkInWater(GameObject boid)
     {
         return boid.GetComponent<Collider>().bounds.Intersects(waterBounds);
     }
-
-    
 }
