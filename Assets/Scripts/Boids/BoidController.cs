@@ -10,12 +10,13 @@ using UnityEngine;
 
 public class BoidController : MonoBehaviour
 {
+    // Flock object to move the flock center
     public GameObject flock;
-    // boid prefab
+    // Boid prefab to make flock
     public GameObject boid;
-
+    // Pond object 
     public GameObject pond;
-
+    // Bounds for where the boids can move
     Bounds waterBounds;
 
     // Vec3 for the center of the flocking
@@ -44,7 +45,9 @@ public class BoidController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        // Sets collider bounds for the flock
         waterBounds = pond.GetComponent<Collider>().bounds;
+
         boids = new GameObject[maxBoids];
         // Fills the boids array with boid prefabs
         for (int i = 0; i < maxBoids; i++)
@@ -84,14 +87,13 @@ public class BoidController : MonoBehaviour
             boids[i].GetComponent<Boid>().velocity = boidVelocity;
             boids[i].GetComponent<Boid>().capVelocity();
             boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
+
             if (!checkInWater(boids[i]))
             {
                 clampPosition(boids[i]);
                 boids[i].GetComponent<Boid>().velocity = -boids[i].GetComponent<Boid>().velocity;
-                flock.transform.position = Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime * speed);
-                //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, pond.transform.position, Time.deltaTime* speed);
             }
-            
+
         }
     }
 
@@ -140,7 +142,6 @@ public class BoidController : MonoBehaviour
             boids[i].transform.position =
                 Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
         }
-
     }
 
     public void chooseFleeDirection()
@@ -169,7 +170,7 @@ public class BoidController : MonoBehaviour
     // Prevents boids from leaving an bounded area
     void clampPosition(GameObject gameObject)
     {
-        
+
         Vector3 pos = gameObject.transform.position;
         pos.x = Mathf.Clamp(pos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
         pos.y = Mathf.Clamp(pos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
@@ -182,4 +183,6 @@ public class BoidController : MonoBehaviour
     {
         return boid.GetComponent<Collider>().bounds.Intersects(waterBounds);
     }
+
+    
 }

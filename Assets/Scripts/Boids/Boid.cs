@@ -7,7 +7,8 @@ public class Boid : MonoBehaviour {
     // Vector3 for the boid velocity
     public Vector3 velocity = new Vector3(0.0f,0.0f,0.0f);
     public Vector3 runDirection;
-    public int velocityCap = 1;
+    // int for capping Velocity so boids dont move too fast 
+    public int velocityCap = 2;
 
     // int for the fishes health level
     private int health = 100;
@@ -50,9 +51,11 @@ public class Boid : MonoBehaviour {
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.tag == "Player")
-           collisionState = CollisionStates.Player;
-        else if (col.gameObject.tag == "Fish")
-            collisionState = CollisionStates.OtherFish;
+        {
+            collisionState = CollisionStates.Player;
+            Vector3.MoveTowards(transform.position, -col.transform.position, Time.deltaTime);
+        }
+           
         else if (col.gameObject.tag == "Predator")
             collisionState = CollisionStates.Predator;
         else
