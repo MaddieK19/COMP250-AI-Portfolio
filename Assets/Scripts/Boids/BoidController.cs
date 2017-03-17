@@ -16,6 +16,8 @@ public class BoidController : MonoBehaviour
 
     public GameObject pond;
 
+    Bounds waterBounds;
+
     // Vec3 for the center of the flocking
     public Vector3 flockCenter;
     // Vec3 for the flock velocity
@@ -29,19 +31,20 @@ public class BoidController : MonoBehaviour
     static int spawnArea = 3;
     // float for the boids movement speed
     float speed = 0.6f;
-
+    // timer for updating flock position
     float timeCounter = 0;
 
     float seperationDistance = 0.5f, cohesionAmount = 100;
 
     //! Array of boid prefabs
-    public GameObject[] boids; 
+    public GameObject[] boids;
     //! Bool for whether the boids should flock be flocking
     public bool flockActive = false;
 
     // Use this for initialization
     void Start()
     {
+        waterBounds = pond.GetComponent<Collider>().bounds;
         boids = new GameObject[maxBoids];
         // Fills the boids array with boid prefabs
         for (int i = 0; i < maxBoids; i++)
@@ -71,7 +74,7 @@ public class BoidController : MonoBehaviour
     // Recalculates each boids position
     void updateBoidPosition()
     {
-        clampPosition(flock);
+        //clampPosition(flock);
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -81,7 +84,14 @@ public class BoidController : MonoBehaviour
             boids[i].GetComponent<Boid>().velocity = boidVelocity;
             boids[i].GetComponent<Boid>().capVelocity();
             boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
-            clampPosition(boids[i]);
+            if (!checkInWater(boids[i]))
+            {
+                clampPosition(boids[i]);
+                boids[i].GetComponent<Boid>().velocity = -boids[i].GetComponent<Boid>().velocity;
+                flock.transform.position = Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime * speed);
+                //boids[i].transform.position = Vector3.MoveTowards(boids[i].transform.position, pond.transform.position, Time.deltaTime* speed);
+            }
+            
         }
     }
 
@@ -108,7 +118,6 @@ public class BoidController : MonoBehaviour
                 }
             }
         }
-
         separationVector = center;
     }
 
@@ -128,7 +137,7 @@ public class BoidController : MonoBehaviour
     {
         for (int i = 0; i < maxBoids; i++)
         {
-            boids[i].transform.position = 
+            boids[i].transform.position =
                 Vector3.MoveTowards(boids[i].transform.position, boids[i].GetComponent<Boid>().runDirection, Time.deltaTime);
         }
 
@@ -143,6 +152,7 @@ public class BoidController : MonoBehaviour
 
     }
 
+    // Moves flock towards goal
     void moveFlock(Vector3 goal)
     {
         flock.transform.position = Vector3.MoveTowards(flock.transform.position, goal, speed * Time.deltaTime);
@@ -156,13 +166,20 @@ public class BoidController : MonoBehaviour
         flock.transform.position = new Vector3(Mathf.Cos(timeCounter) * 2, Mathf.Sin(timeCounter) * 2, 0);
     }
 
+    // Prevents boids from leaving an bounded area
     void clampPosition(GameObject gameObject)
     {
-        Bounds waterBounds = pond.GetComponent<Collider>().bounds;
+        
         Vector3 pos = gameObject.transform.position;
         pos.x = Mathf.Clamp(pos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
         pos.y = Mathf.Clamp(pos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
         pos.z = Mathf.Clamp(pos.z, waterBounds.center.z - waterBounds.extents.z, waterBounds.center.z + waterBounds.extents.z);
+
         gameObject.transform.position = pos;
+    }
+
+    bool checkInWater(GameObject boid)
+    {
+        return boid.GetComponent<Collider>().bounds.Intersects(waterBounds);
     }
 }
