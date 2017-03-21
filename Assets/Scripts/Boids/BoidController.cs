@@ -80,17 +80,21 @@ public class BoidController : MonoBehaviour
             cohesion(boids[i]);
             seperate(boids[i]);
 
-            Vector3 boidVelocity = boids[i].GetComponent<Boid>().velocity + cohesionVector + separationVector;
-            boids[i].GetComponent<Boid>().velocity = boidVelocity;
-            boids[i].GetComponent<Boid>().capVelocity();
-            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
+            Boid currentBoid = boids[i].GetComponent<Boid>();
+            
+            currentBoid.velocity = currentBoid.velocity + cohesionVector + separationVector; ;
+            
+            
 
             if (!checkInWater(boids[i]))
             {
                 clampPosition(boids[i]);
-                boids[i].GetComponent<Boid>().velocity = -boids[i].GetComponent<Boid>().velocity;
-                flock.transform.position = Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime * speed);
+                currentBoid.velocity = -currentBoid.velocity;
+                //flock.transform.position = Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime * speed);
             }
+
+            currentBoid.capVelocity();
+            boids[i].transform.position = boids[i].transform.position + currentBoid.velocity * Time.deltaTime * speed;
         }
     }
 
