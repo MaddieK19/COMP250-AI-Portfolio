@@ -8,8 +8,6 @@ using UnityEngine;
  * Used pseudocode from http://www.kfish.org/boids/pseudocode.html as a starting point
  */
 
-    // TODO: More comments
-
 public class BoidController : MonoBehaviour
 {
     public GameObject flock;
@@ -175,9 +173,9 @@ public class BoidController : MonoBehaviour
     void clampPosition(GameObject gameObject)
     {
         Vector3 pos = gameObject.transform.position;
-        pos.x = Mathf.Clamp(pos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
-        pos.y = Mathf.Clamp(pos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
-        pos.z = Mathf.Clamp(pos.z, waterBounds.center.z - waterBounds.extents.z, waterBounds.center.z + waterBounds.extents.z);
+        pos.x = Mathf.Clamp(pos.x, waterBounds.min.x, waterBounds.max.x);
+        pos.y = Mathf.Clamp(pos.y, waterBounds.min.y, waterBounds.max.y);
+        pos.z = Mathf.Clamp(pos.z, waterBounds.min.z, waterBounds.max.z);
         gameObject.transform.position = pos;
     }
 }
