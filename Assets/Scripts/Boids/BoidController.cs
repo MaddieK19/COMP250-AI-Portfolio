@@ -8,25 +8,24 @@ using UnityEngine;
  * Used pseudocode from http://www.kfish.org/boids/pseudocode.html as a starting point
  */
 
+    // TODO: More comments
+
 public class BoidController : MonoBehaviour
 {
     public GameObject flock;
     // boid prefab
-    public GameObject boid;
+    public GameObject boidPrefab;
 
     public GameObject pond;
 
     // Vec3 for the center of the flocking
     public Vector3 flockCenter;
-    // Vec3 for the flock velocity
-    public Vector3 flockVelocity = new Vector3(1, 0, 0);
     //Vector 3 used to determine boids next position 
     Vector3 cohesionVector, separationVector;
 
     // int for the maximum number of boids that will be spawned
     static int maxBoids = 100;
-    //! int for the range of coordinates where boids can spawn
-    static int spawnArea = 3;
+
     // float for the boids movement speed
     float speed = 0.6f;
 
@@ -52,7 +51,7 @@ public class BoidController : MonoBehaviour
             Vector3 boidPosition = new Vector3(Random.Range(waterBounds.min.x, waterBounds.max.x), 
                 Random.Range(waterBounds.min.y, waterBounds.max.y), 
                 Random.Range(waterBounds.min.z, waterBounds.max.z));
-            boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
+            boids[i] = Instantiate(boidPrefab, boidPosition, Quaternion.identity) as GameObject;
         }
         chooseFleeDirection();
     }
