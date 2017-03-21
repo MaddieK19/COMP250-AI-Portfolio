@@ -13,9 +13,7 @@ public class BoidController : MonoBehaviour
     // Flock object to move the flock center
     public GameObject flock;
     // Boid prefab to make flock
-    public GameObject boidPrefab;
-
-    public Boid boidComponent;
+    public GameObject boid;
     // Pond object 
     public GameObject pond;
     // Bounds for where the boids can move
@@ -55,7 +53,7 @@ public class BoidController : MonoBehaviour
         for (int i = 0; i < maxBoids; i++)
         {
             Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(0, spawnArea), Random.Range(-spawnArea, spawnArea));
-            boids[i] = Instantiate(boidPrefab, boidPosition, Quaternion.identity) as GameObject;
+            boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
         chooseFleeDirection();
     }
@@ -87,31 +85,29 @@ public class BoidController : MonoBehaviour
             cohesion(boids[i]);
             seperate(boids[i]);
 
-            boidComponent = boids[i].GetComponent<Boid>();
-
             Vector3 boidVelocity = boids[i].GetComponent<Boid>().velocity + cohesionVector + separationVector;
-            boidComponent.velocity = boidVelocity;
-            boidComponent.capVelocity();
-            boids[i].transform.position = boids[i].transform.position + boidComponent.velocity * Time.deltaTime * speed;
+            boids[i].GetComponent<Boid>().velocity = boidVelocity;
+            boids[i].GetComponent<Boid>().capVelocity();
+            boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
 
             if (!checkInWater(boids[i]))
             {
                 clampPosition(boids[i].transform.position);
 
-                if (boidComponent.velocity.y < waterBounds.center.y - waterBounds.extents.y ||
-                    boidComponent.velocity.y > waterBounds.center.y + waterBounds.extents.y)
+                if (boids[i].GetComponent<Boid>().velocity.y < 0 ||
+                    boids[i].GetComponent<Boid>().velocity.y > 10)
                 {
-                    boids[i].GetComponent<Boid>().velocity.y = -boidComponent.velocity.y;
+                    boids[i].GetComponent<Boid>().velocity.y = -boids[i].GetComponent<Boid>().velocity.y;
                 }
-                if (boidComponent.velocity.x < waterBounds.center.x - waterBounds.extents.x ||
-                    boidComponent.velocity.x > waterBounds.center.x + waterBounds.extents.x)
+                if (boids[i].GetComponent<Boid>().velocity.x < waterBounds.center.x - waterBounds.extents.x ||
+                    boids[i].GetComponent<Boid>().velocity.x > waterBounds.center.x + waterBounds.extents.x)
                 {
-                    boids[i].GetComponent<Boid>().velocity.x = -boidComponent.velocity.x;
+                    boids[i].GetComponent<Boid>().velocity.x = -boids[i].GetComponent<Boid>().velocity.x;
                 }
-                if (boidComponent.velocity.z < waterBounds.center.z - waterBounds.extents.z ||
-                    boidComponent.velocity.z > waterBounds.center.z + waterBounds.extents.z)
+                if (boids[i].GetComponent<Boid>().velocity.z < waterBounds.center.z - waterBounds.extents.z ||
+                    boids[i].GetComponent<Boid>().velocity.z > waterBounds.center.z + waterBounds.extents.z)
                 {
-                    boids[i].GetComponent<Boid>().velocity.z = -boidComponent.velocity.z;
+                    boids[i].GetComponent<Boid>().velocity.z = -boids[i].GetComponent<Boid>().velocity.z;
                 }
             }
         }
