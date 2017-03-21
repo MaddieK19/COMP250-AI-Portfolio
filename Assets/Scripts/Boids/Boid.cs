@@ -70,11 +70,10 @@ public class Boid : MonoBehaviour {
 
     public void capVelocity()
     {
-        if (velocity.x > velocityCap)
-            velocity.x = velocityCap;
-        if (velocity.y > velocityCap)
-            velocity.y = velocityCap;
-        if (velocity.z > velocityCap)
-            velocity.z = velocityCap;
+        Vector3 currentVelocity = transform.position;
+        currentVelocity.x = Mathf.Clamp(currentVelocity.x, -velocityCap, velocityCap);
+        currentVelocity.y = Mathf.Clamp(currentVelocity.y, -velocityCap, velocityCap);
+        currentVelocity.z = Mathf.Clamp(currentVelocity.z, -velocityCap, velocityCap);
+
     }
 }
