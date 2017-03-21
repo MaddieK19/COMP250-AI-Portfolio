@@ -74,7 +74,7 @@ public class BoidController : MonoBehaviour
     // Recalculates each boids position
     void updateBoidPosition()
     {
-        clampPosition(flock);
+        flock.transform.position = clampPosition(flock.transform.position);
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -88,9 +88,8 @@ public class BoidController : MonoBehaviour
 
             if (!checkInWater(boids[i]))
             {
-                clampPosition(boids[i]);
+                boids[i].transform.position = clampPosition(boids[i].transform.position);
                 currentBoid.velocity = -currentBoid.velocity;
-                //flock.transform.position = Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime * speed);
             }
 
             currentBoid.capVelocity();
@@ -157,6 +156,7 @@ public class BoidController : MonoBehaviour
         for (int i = 0; i < maxBoids; i++)
         {
             boids[i].GetComponent<Boid>().chooseRunDirection();
+            boids[i].GetComponent<Boid>().runDirection = clampPosition(boids[i].GetComponent<Boid>().runDirection);
         }
 
     }
@@ -174,12 +174,11 @@ public class BoidController : MonoBehaviour
         flock.transform.position = new Vector3(Mathf.Cos(timeCounter) * 2, Mathf.Sin(timeCounter) * 2, 0);
     }
 
-    void clampPosition(GameObject gameObject)
+    Vector3 clampPosition(Vector3 objectPosition)
     {
-        Vector3 pos = gameObject.transform.position;
-        pos.x = Mathf.Clamp(pos.x, waterBounds.min.x, waterBounds.max.x);
-        pos.y = Mathf.Clamp(pos.y, waterBounds.min.y, waterBounds.max.y);
-        pos.z = Mathf.Clamp(pos.z, waterBounds.min.z, waterBounds.max.z);
-        gameObject.transform.position = pos;
+        objectPosition.x = Mathf.Clamp(objectPosition.x, waterBounds.min.x, waterBounds.max.x);
+        objectPosition.y = Mathf.Clamp(objectPosition.y, waterBounds.min.y, waterBounds.max.y);
+        objectPosition.z = Mathf.Clamp(objectPosition.z, waterBounds.min.z, waterBounds.max.z);
+        return objectPosition;
     }
 }

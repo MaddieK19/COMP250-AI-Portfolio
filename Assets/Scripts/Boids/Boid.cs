@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Boid : MonoBehaviour {
     // Vector3 for the boid velocity
-    public Vector3 velocity = new Vector3(0.0f,0.0f,0.0f);
+    public Vector3 velocity;
     public Vector3 runDirection;
     // int for capping Velocity so boids dont move too fast 
     public int velocityCap = 2;
@@ -40,22 +40,23 @@ public class Boid : MonoBehaviour {
     // Use this for initialization
     void Start () {
         collisionState = CollisionStates.None;
+        velocity = new Vector3(0.0f, 0.0f, 0.0f);
     }
 	
 	// Update is called once per frame
 	void Update () {
-        //capVelocity();		
+		
 	}
 
     // Setes the boids collision state to allow it to react correctly
     void OnCollisionEnter(Collision col)
     {
+        Debug.Log("collision");
         if (col.gameObject.tag == "Player")
         {
             collisionState = CollisionStates.Player;
-            Vector3.MoveTowards(transform.position, -col.transform.position, Time.deltaTime);
         }
-           
+
         else if (col.gameObject.tag == "Predator")
             collisionState = CollisionStates.Predator;
         else
