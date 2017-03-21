@@ -34,6 +34,8 @@ public class BoidController : MonoBehaviour
 
     float seperationDistance = 0.5f, cohesionAmount = 100;
 
+    Bounds waterBounds;
+
     //! Array of boid prefabs
     public GameObject[] boids; 
     //! Bool for whether the boids should flock be flocking
@@ -42,11 +44,14 @@ public class BoidController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        waterBounds = pond.GetComponent<Collider>().bounds;
         boids = new GameObject[maxBoids];
         // Fills the boids array with boid prefabs
         for (int i = 0; i < maxBoids; i++)
         {
-            Vector3 boidPosition = new Vector3(Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea), Random.Range(-spawnArea, spawnArea));
+            Vector3 boidPosition = new Vector3(Random.Range(waterBounds.min.x, waterBounds.max.x), 
+                Random.Range(waterBounds.min.y, waterBounds.max.y), 
+                Random.Range(waterBounds.min.z, waterBounds.max.z));
             boids[i] = Instantiate(boid, boidPosition, Quaternion.identity) as GameObject;
         }
         chooseFleeDirection();
@@ -64,6 +69,7 @@ public class BoidController : MonoBehaviour
     public void updateFlock()
     {
         calculateCenter();
+        waterBounds = pond.GetComponent<Collider>().bounds;
         updateBoidPosition();
         circularMovement();
     }
@@ -81,8 +87,19 @@ public class BoidController : MonoBehaviour
             boids[i].GetComponent<Boid>().velocity = boidVelocity;
             boids[i].GetComponent<Boid>().capVelocity();
             boids[i].transform.position = boids[i].transform.position + boids[i].GetComponent<Boid>().velocity * Time.deltaTime * speed;
-            clampPosition(boids[i]);
+
+            if (!checkInWater(boids[i]))
+            {
+                clampPosition(boids[i]);
+                boids[i].GetComponent<Boid>().velocity = -boids[i].GetComponent<Boid>().velocity;
+                flock.transform.position = Vector3.MoveTowards(flock.transform.position, pond.transform.position, Time.deltaTime * speed);
+            }
         }
+    }
+
+    bool checkInWater(GameObject boid)
+    {
+        return boid.GetComponent<Collider>().bounds.Intersects(waterBounds);
     }
 
     // Applies cohesion rule to vector
@@ -158,7 +175,6 @@ public class BoidController : MonoBehaviour
 
     void clampPosition(GameObject gameObject)
     {
-        Bounds waterBounds = pond.GetComponent<Collider>().bounds;
         Vector3 pos = gameObject.transform.position;
         pos.x = Mathf.Clamp(pos.x, waterBounds.center.x - waterBounds.extents.x, waterBounds.center.x + waterBounds.extents.x);
         pos.y = Mathf.Clamp(pos.y, waterBounds.center.y - waterBounds.extents.y, waterBounds.center.y + waterBounds.extents.y);
