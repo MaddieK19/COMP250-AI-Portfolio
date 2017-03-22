@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class BoidController : MonoBehaviour
 {
-    public GameObject flock;
+    //public GameObject flock;
     // boid prefab
     public GameObject boidPrefab;
 
@@ -74,7 +74,7 @@ public class BoidController : MonoBehaviour
     // Recalculates each boids position
     void updateBoidPosition()
     {
-        flock.transform.position = clampPosition(flock.transform.position);
+        transform.position = clampPosition(transform.position);
         for (int i = 0; i < maxBoids; i++)
         {
             cohesion(boids[i]);
@@ -105,8 +105,8 @@ public class BoidController : MonoBehaviour
     // Applies cohesion rule to vector
     void cohesion(GameObject boid)
     {
-        if (boid.transform.position != flock.transform.position)
-            cohesionVector = (flock.transform.position - boid.transform.position) / cohesionAmount;
+        if (boid.transform.position != transform.position)
+            cohesionVector = (transform.position - boid.transform.position) / cohesionAmount;
     }
 
     // Stops boids from colliding and makes them match velocites 
@@ -138,7 +138,7 @@ public class BoidController : MonoBehaviour
         {
             flockCenter = flockCenter + boids[i].transform.position;
         }
-        flockCenter = flock.transform.position / maxBoids;
+        flockCenter = transform.position / maxBoids;
     }
 
     void fleeFromDanger()
@@ -163,15 +163,15 @@ public class BoidController : MonoBehaviour
 
     void moveFlock(Vector3 goal)
     {
-        flock.transform.position = Vector3.MoveTowards(flock.transform.position, goal, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, goal, speed * Time.deltaTime);
     }
 
     // Moves the center of the flock in a circle for the boids to follow
     void circularMovement()
     {
-        Vector3 previousPosition = flock.transform.position;
+        Vector3 previousPosition = transform.position;
         timeCounter += Time.deltaTime;
-        flock.transform.position = new Vector3(Mathf.Cos(timeCounter) * 2, Mathf.Sin(timeCounter) * 2, 0);
+        transform.position = new Vector3(Mathf.Cos(timeCounter) * 2, Mathf.Sin(timeCounter) * 2, 0);
     }
 
     Vector3 clampPosition(Vector3 objectPosition)
