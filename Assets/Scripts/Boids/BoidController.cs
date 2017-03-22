@@ -10,35 +10,38 @@ using UnityEngine;
 
 public class BoidController : MonoBehaviour
 {
-    //public GameObject flock;
-    // boid prefab
+    //! boid prefab used to populate boids arrary
     public GameObject boidPrefab;
-
+    //! GameObject that has bounds used to control where boids can move
     public GameObject pond;
+    //! Bounds from pond's collider
+    Bounds waterBounds;
 
-    // Vec3 for the center of the flocking
+    //! Vector3 for the center of the flock
     public Vector3 flockCenter;
-    //Vector 3 used to determine boids next position 
+    //! Vector 3 used to determine boids next position 
     Vector3 cohesionVector, separationVector;
 
-    // int for the maximum number of boids that will be spawned
+    //! int for the maximum number of boids that will be spawned
     static int maxBoids = 100;
 
-    // float for the boids movement speed
+    //! float for the boids movement speed
     float speed = 0.6f;
-
+    //! float used to calculate circular movement path for the flock
     float timeCounter = 0;
+    //! float for the maximum distance between boids
+    float seperationDistance = 0.5f;
 
-    float seperationDistance = 0.5f, cohesionAmount = 100;
+    float cohesionAmount = 100;
 
-    Bounds waterBounds;
+    
 
     //! Array of boid prefabs
     public GameObject[] boids; 
     //! Bool for whether the boids should flock be flocking
     public bool flockActive = false;
 
-    // Use this for initialization
+    //! Use this for initialization
     void Start()
     {
         waterBounds = pond.GetComponent<Collider>().bounds;
@@ -50,11 +53,11 @@ public class BoidController : MonoBehaviour
                 Random.Range(waterBounds.min.y, waterBounds.max.y), 
                 Random.Range(waterBounds.min.z, waterBounds.max.z));
             boids[i] = Instantiate(boidPrefab, boidPosition, Quaternion.identity) as GameObject;
+            boids[i].GetComponent<Boid>().chooseRunDirection();
         }
-        chooseFleeDirection();
     }
 
-    // Update is called once per frame
+    //! Update is called once per frame
     void Update()
     {
         if (flockActive)
@@ -63,6 +66,7 @@ public class BoidController : MonoBehaviour
             fleeFromDanger();
     }
 
+    //! updates the position of all the boids
     public void updateFlock()
     {
         calculateCenter();
@@ -71,7 +75,7 @@ public class BoidController : MonoBehaviour
         circularMovement();
     }
 
-    // Recalculates each boids position
+    //! Recalculates each boids position
     void updateBoidPosition()
     {
         transform.position = clampPosition(transform.position);
@@ -92,33 +96,35 @@ public class BoidController : MonoBehaviour
                 currentBoid.velocity = -currentBoid.velocity;
             }
 
-            currentBoid.capVelocity();
+            currentBoid.clampVelocity();
             boids[i].transform.position = boids[i].transform.position + currentBoid.velocity * Time.deltaTime * speed;
         }
     }
 
+    //! Returns a bool for whether a boid is intersecting with waterBounds
     bool checkInWater(GameObject boid)
     {
         return boid.GetComponent<Collider>().bounds.Intersects(waterBounds);
     }
 
-    // Applies cohesion rule to vector
+    //! Applies cohesion rule to vector
     void cohesion(GameObject boid)
     {
         if (boid.transform.position != transform.position)
             cohesionVector = (transform.position - boid.transform.position) / cohesionAmount;
     }
 
-    // Stops boids from colliding and makes them match velocites 
+    //! Stops boids from colliding and makes them match velocites 
     void seperate(GameObject boid)
     {
         Vector3 center = new Vector3();
         for (int i = 0; i < maxBoids; i++)
         {
+            
             if (boids[i] != boid)
             {
                 if (Vector3.Distance(boids[i].transform.position, boid.transform.position) < seperationDistance)
-                {
+                { 
                     center = center - (boids[i].transform.position - boid.transform.position);
                     boid.GetComponent<Boid>().velocity = (boid.GetComponent<Boid>().velocity + boids[i].GetComponent<Boid>().velocity) / 2;
                     boids[i].GetComponent<Boid>().velocity = boid.GetComponent<Boid>().velocity;
@@ -129,7 +135,7 @@ public class BoidController : MonoBehaviour
         separationVector = center;
     }
 
-    // Calculates and returns the center points of all the boids
+    //! Calculates and returns the center points of all the boids
     void calculateCenter()
     {
         // Resets center to 0
@@ -151,22 +157,26 @@ public class BoidController : MonoBehaviour
 
     }
 
+    //! Chooses calls chooseRunDirection() for each boid
     public void chooseFleeDirection()
     {
         for (int i = 0; i < maxBoids; i++)
         {
-            boids[i].GetComponent<Boid>().chooseRunDirection();
-            boids[i].GetComponent<Boid>().runDirection = clampPosition(boids[i].GetComponent<Boid>().runDirection);
+            Boid currentBoid = boids[i].GetComponent<Boid>();
+            currentBoid.chooseRunDirection();
+            currentBoid.runDirection = clampPosition(currentBoid.runDirection);
+            boids[i].GetComponent<Boid>().runDirection = currentBoid.runDirection;
         }
 
     }
 
+    //! Takes a Vector3 and moves the flock towards it
     void moveFlock(Vector3 goal)
     {
         transform.position = Vector3.MoveTowards(transform.position, goal, speed * Time.deltaTime);
     }
 
-    // Moves the center of the flock in a circle for the boids to follow
+    //! Moves the center of the flock in a circle for the boids to follow
     void circularMovement()
     {
         Vector3 previousPosition = transform.position;
@@ -174,6 +184,7 @@ public class BoidController : MonoBehaviour
         transform.position = new Vector3(Mathf.Cos(timeCounter) * 2, Mathf.Sin(timeCounter) * 2, 0);
     }
 
+    //! Takes a Vector3 and clamps it to be within the given bounds and returns a Vector3
     Vector3 clampPosition(Vector3 objectPosition)
     {
         objectPosition.x = Mathf.Clamp(objectPosition.x, waterBounds.min.x, waterBounds.max.x);
