@@ -15,7 +15,7 @@ public class GenerateRunAwayDirections : ActionNode
     //! Updates the node and returns a Status
     public override Status Update()
     {
-        controller.chooseFleeDirection();
+        controller.chooseAllFleeDirections();
         return Status.Success;
     }
 }

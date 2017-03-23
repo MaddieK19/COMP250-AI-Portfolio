@@ -56,8 +56,8 @@ public class BoidController : MonoBehaviour
                 Random.Range(waterBounds.min.y, waterBounds.max.y), 
                 Random.Range(waterBounds.min.z, waterBounds.max.z));
             boids[i] = Instantiate(boidPrefab, boidPosition, Quaternion.identity) as GameObject;
-            boids[i].GetComponent<Boid>().chooseRunDirection();
-        }
+         }
+        chooseAllFleeDirections();
     }
 
     //! Update is called once per frame
@@ -66,16 +66,28 @@ public class BoidController : MonoBehaviour
         if (flockActive)
             updateFlock();
         else
-            fleeFromDanger();
+            updateRoaming();
+            
     }
 
     //! updates the position of all the boids
     public void updateFlock()
     {
         calculateCenter();
-        waterBounds = pond.GetComponent<Collider>().bounds;
         updateBoidPosition();
         circularMovement();
+    }
+
+    public void updateRoaming()
+    {
+        fleeFromDanger();
+        for (int i =0; i < maxBoids; i++)
+        {
+            if (boids[i].transform.position == boids[i].GetComponent<Boid>().runDirection)
+            {
+                chooseFleeDirection(boids[i]);
+            }
+        }
     }
 
     //! Recalculates each boids position
@@ -90,8 +102,6 @@ public class BoidController : MonoBehaviour
             Boid currentBoid = boids[i].GetComponent<Boid>();
             currentBoid.inFlock = true;
             currentBoid.velocity = currentBoid.velocity + cohesionVector + separationVector; ;
-            
-            
 
             if (!checkInWater(boids[i]))
             {
@@ -161,18 +171,21 @@ public class BoidController : MonoBehaviour
     }
 
     //! Chooses calls chooseRunDirection() for each boid
-    public void chooseFleeDirection()
+    public void chooseAllFleeDirections()
     {
         for (int i = 0; i < maxBoids; i++)
         {
-            Boid currentBoid = boids[i].GetComponent<Boid>();
-            currentBoid.chooseRunDirection();
-            currentBoid.inFlock = false;
-            currentBoid.runDirection = clampPosition(currentBoid.runDirection);
-            boids[i].GetComponent<Boid>().runDirection = currentBoid.runDirection;
-            
+            chooseFleeDirection(boids[i]);
         }
+    }
 
+    public Boid chooseFleeDirection(GameObject boid)
+    {
+        Boid currentBoid = boid.GetComponent<Boid>();
+        currentBoid.chooseRunDirection();
+        currentBoid.inFlock = false;
+        currentBoid.runDirection = clampPosition(currentBoid.runDirection);
+        return currentBoid;
     }
 
     //! Takes a Vector3 and moves the flock towards it

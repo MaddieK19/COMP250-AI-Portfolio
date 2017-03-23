@@ -14,7 +14,7 @@ public class Boid : MonoBehaviour {
     //! Vector3 for the random direction the boid will move in when not flocking
     public Vector3 runDirection;
     //! int for capping Velocity so boids dont move too fast 
-    public int velocityCap = 2;
+    public int velocityCap = 4;
     //! Bool for whether flocking is active
     public bool inFlock = false;
 
@@ -40,10 +40,7 @@ public class Boid : MonoBehaviour {
 	
 	//! Update is called once per frame
 	void Update () {
-        if (transform.position == runDirection)
-        {
-            chooseRunDirection();
-        }
+        
 	}
 
     //! Generates a Vec3 of random coordinates
