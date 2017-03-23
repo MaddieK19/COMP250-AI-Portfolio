@@ -38,6 +38,8 @@ public class BoidController : MonoBehaviour
 
     //! Array of boid prefabs
     public GameObject[] boids; 
+
+    public GameObject[] deadBoids;
     //! Bool for whether the boids should flock be flocking
     public bool flockActive = false;
 
@@ -46,6 +48,7 @@ public class BoidController : MonoBehaviour
     {
         waterBounds = pond.GetComponent<Collider>().bounds;
         boids = new GameObject[maxBoids];
+        deadBoids = new GameObject[maxBoids];
         // Fills the boids array with boid prefabs
         for (int i = 0; i < maxBoids; i++)
         {
@@ -83,9 +86,9 @@ public class BoidController : MonoBehaviour
         {
             cohesion(boids[i]);
             seperate(boids[i]);
-
-            Boid currentBoid = boids[i].GetComponent<Boid>();
             
+            Boid currentBoid = boids[i].GetComponent<Boid>();
+            currentBoid.inFlock = true;
             currentBoid.velocity = currentBoid.velocity + cohesionVector + separationVector; ;
             
             
@@ -164,8 +167,10 @@ public class BoidController : MonoBehaviour
         {
             Boid currentBoid = boids[i].GetComponent<Boid>();
             currentBoid.chooseRunDirection();
+            currentBoid.inFlock = false;
             currentBoid.runDirection = clampPosition(currentBoid.runDirection);
             boids[i].GetComponent<Boid>().runDirection = currentBoid.runDirection;
+            
         }
 
     }

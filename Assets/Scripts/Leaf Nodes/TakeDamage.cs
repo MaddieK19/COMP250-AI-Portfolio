@@ -7,9 +7,12 @@ using System;
 
 public class TakeDamage : ActionNode
 {
-    public Boid boid;
+    Boid boid;
     public override Status Update()
     {
+        if (boid == null)
+            boid = self.GetComponent<Boid>();
+
         if (boid.getHealth() < 1)
             return Status.Failure;
         else

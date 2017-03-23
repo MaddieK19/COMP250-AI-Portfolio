@@ -15,21 +15,11 @@ public class Boid : MonoBehaviour {
     public Vector3 runDirection;
     //! int for capping Velocity so boids dont move too fast 
     public int velocityCap = 2;
+    //! Bool for whether flocking is active
+    public bool inFlock = false;
 
     //! int for the fishes health level
-    private int health = 100;
-
-    //! Enum of possible collision statuses for the boid
-    public enum CollisionStates
-    {
-        None,
-        Player,
-        OtherFish,
-        Predator,
-        Environment
-    };
-    //! CollisionStates for the boids current collision status
-    public CollisionStates collisionState;
+    public int health = 100;
 
     //! returns the boids health 
     public int getHealth()
@@ -45,7 +35,6 @@ public class Boid : MonoBehaviour {
 
     //! Use this for initialization
     void Start () {
-        collisionState = CollisionStates.None;
         velocity = new Vector3(0.0f, 0.0f, 0.0f);
     }
 	
@@ -53,22 +42,9 @@ public class Boid : MonoBehaviour {
 	void Update () {
         if (transform.position == runDirection)
         {
-            //chooseRunDirection();
+            chooseRunDirection();
         }
-		
 	}
-
-    //! Sets the boids collision state to allow it to react correctly
-    void OnCollisionEnter(Collision col)
-    {
-        Debug.Log("collision");
-        if (col.gameObject.tag == "Player")
-            collisionState = CollisionStates.Player;
-        else if (col.gameObject.tag == "Predator")
-            collisionState = CollisionStates.Predator;
-        else
-            collisionState = CollisionStates.None;
-    }
 
     //! Generates a Vec3 of random coordinates
     public void chooseRunDirection()
