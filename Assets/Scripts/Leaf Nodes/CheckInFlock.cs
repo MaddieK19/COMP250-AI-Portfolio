@@ -9,9 +9,12 @@ using System;
 
 public class CheckInFlock : ActionNode
 {
+    //! Boid script component in a boid prefab
+    Boid boid;
+    //! Updates the node and returns a Status
     public override Status Update()
     {
-        Boid boid = self.GetComponent<Boid>();
+        boid = self.GetComponent<Boid>();
 
         if (boid.inFlock == true)
             return Status.Running;

@@ -9,11 +9,13 @@ using System;
  */
 public class CheckForGameObjects : ActionNode
 {
-    //
+    //! The GameObject whose distance is being checked
     GameObject objectToCheck;
-    FloatVar distance;
-    //! float 
+    //! Float for how far apart the two GameObjects are
+    float distance; 
+    //! float for how close together objects need to be to return success
     public float distanceThreshold;
+    //! Updates the node and returns a Status
     public override Status Update()
     {
         if (objectToCheck == null)

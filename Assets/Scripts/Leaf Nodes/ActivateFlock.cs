@@ -12,7 +12,7 @@ public class ActivateFlock : ActionNode
 {
     //! The BoidController that manages the boids behaviour
     public BoidController controller;
-
+    //! Updates the node and returns a Status
     public override Status Update()
     {
         controller.flockActive = true;
