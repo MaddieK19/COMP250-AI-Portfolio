@@ -6,21 +6,23 @@ using UnityEngine.AI;
 
 public class GoToGameObject : ActionNode
 {
-
-    public NavMeshAgent fishNavMesh;
-    public GameObjectVar fish;
-    public GameObjectVar goalObject;
+    public GameObject goalObject;
 
     public override Status Update()
     {
-        if (Vector3.Distance(fish.Value.transform.position, goalObject.Value.transform.position) < 1)
+        if (goalObject == null)
+        {
+            goalObject = self;
+        }
+
+        if (Vector3.Distance(self.transform.position, goalObject.transform.position) < 1)
         {
             return Status.Success;
         }
 
         else
         {
-            fishNavMesh.SetDestination(goalObject.Value.transform.position);
+            self.transform.position = Vector3.MoveTowards(self.transform.position, goalObject.transform.position, Time.deltaTime);
             return Status.Running;
         }
     }

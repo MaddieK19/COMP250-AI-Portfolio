@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using BehaviourMachine;
 using System;
-
+/*!
+ * LeafNode that check the distance between two objects
+ * and returns Success if it's under the threshold
+ */
 public class CheckForGameObjects : ActionNode
 {
-    public GameObjectVar objectToCheck;
-    public GameObjectVar fish;
+    //
+    GameObject objectToCheck;
     FloatVar distance;
-    public FloatVar distanceThreshold;
+    //! float 
+    public float distanceThreshold;
     public override Status Update()
     {
-        distance = (objectToCheck.Value.transform.position - fish.Value.transform.position).magnitude;
+        if (objectToCheck == null)
+            objectToCheck = GameObject.FindWithTag("Predator");
+
+        
+        distance = (objectToCheck.transform.position - self.transform.position).magnitude;
 
         if (distance > distanceThreshold)
             return Status.Failure;

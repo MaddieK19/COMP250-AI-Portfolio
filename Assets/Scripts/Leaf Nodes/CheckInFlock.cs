@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using BehaviourMachine;
 using System;
+/*!
+ * LeafNode that returns Success if the boid is currently flocking
+ */
 
-public class CheckHealth : ActionNode
+public class CheckInFlock : ActionNode
 {
-    Boid boid;
-    public int minHealth, maxHealth;
     public override Status Update()
     {
-        boid = self.GetComponent<Boid>();
+        Boid boid = self.GetComponent<Boid>();
 
-        if (minHealth > boid.getHealth() && boid.getHealth() < maxHealth)
-        {
+        if (boid.inFlock == true)
             return Status.Running;
-        }
         else
             return Status.Failure;
     }
